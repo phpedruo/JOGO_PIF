@@ -11,6 +11,12 @@ typedef struct {
 
     Texture2D texture;
 
+    float hitboxWidth;
+    float hitboxHeight;
+
+    bool onGrass;
+    float hitTimer;
+
 } Player;
 
 extern Player player;
@@ -22,5 +28,8 @@ void UpdatePlayer(void);
 void DrawPlayer(void);
 
 void UnloadPlayer(void);
+
+Rectangle GetPlayerHitbox();
+bool CheckPlayerOnGrass();
 
 #endif

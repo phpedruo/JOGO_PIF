@@ -9,13 +9,36 @@ float playerX = 0;
 void InitPlayer(void) {
 
     playerX = 0;
+    player.x = 0;
     player.speed = 0;
+    player.hitboxWidth = 80.0f;
+    player.hitboxHeight = 1.5f;
+    player.onGrass = false;
+    player.hitTimer = 0.0f;
 
     player.texture =
         LoadTexture("assets/sprites/player.png");
 }
 
+Rectangle GetPlayerHitbox(){
+    return (Rectangle){
+        playerX - player.hitboxWidth / 2,
+        0,
+        player.hitboxWidth,
+        player.hitboxHeight
+    };
+}
+
+bool CheckPlayerOnGrass(){
+    return (playerX < -500.0f || playerX > 500.0f);
+}
+
 void UpdatePlayer(void) {
+
+    float dt = GetFrameTime();
+
+    if(player.hitTimer > 0)
+        player.hitTimer -= dt;
 
     // =========================
     // ACELERAÇÃO
@@ -26,13 +49,6 @@ void UpdatePlayer(void) {
         player.speed += 0.05f;
     }
 
-    // ========================
-    // VELOCIDADE MÁXIMA
-    // ========================
-
-    if(player.speed > 10)
-        player.speed = 10;
-
     // =========================
     // FREIO
     // =========================
@@ -41,12 +57,18 @@ void UpdatePlayer(void) {
 
         player.speed -= 0.05f;
     }
-
+    
     // =========================
     // ATRITO NATURAL
     // =========================
 
     player.speed *= 0.992f;
+
+    // ========================
+    // VELOCIDADE MÁXIMA
+    // ========================
+    // if(player.speed > 10)
+    //     player.speed = 10;
 
     // =========================
     // LIMITES
@@ -84,11 +106,17 @@ void UpdatePlayer(void) {
 
     roadPosition = fmod(roadPosition, trackDataLen);
     float curve = readTrack(roadPosition);
-    playerX += curve * player.speed * 0.005f;
-    
-    
-    
 
+    // GRAMA
+    player.onGrass = CheckPlayerOnGrass();
+
+    if(player.onGrass){
+        player.speed *= 0.97f;
+        playerX *= 0.97f;
+    }
+
+    // playerX += curve * player.speed * 0.005f;
+ 
     // =========================
     // LIMITE DA PISTA
     // =========================
@@ -98,6 +126,8 @@ void UpdatePlayer(void) {
 
     if (playerX > 600)
         playerX = 600;
+
+    player.x = playerX;
 
 }
 
@@ -111,6 +141,10 @@ void DrawPlayer(void) {
     float height =
         player.texture.height * scale;
 
+    float screenX = SCREEN_WIDTH /2 + playerX * 0.5f;
+
+    float screenY = SCREEN_HEIGHT - height / 2 + 20;
+
     DrawTexturePro(
         
         player.texture,
@@ -123,8 +157,8 @@ void DrawPlayer(void) {
         },
 
         (Rectangle){
-            SCREEN_WIDTH / 2 + playerX * 0.5f,
-            SCREEN_HEIGHT - height/2+20,
+            screenX,
+            screenY,
             width,
             height
         },
@@ -136,8 +170,25 @@ void DrawPlayer(void) {
 
         turnValue * 0.01f,
         WHITE
+  
     );
+    #ifdef DEBUG_HITBOX
+        DrawRectangleLinesEx(
+            (Rectangle){
+                screenX - width / 2,
+                screenY - height,
+                width,
+                height
+            },
+            2,
+            RED
+        );
+        
+        DrawText(TextFormat("playerX: %.1f", playerX), 10, 65, 20, WHITE);
+        DrawText(TextFormat("speed:   %.2f", player.speed), 10, 90, 20, WHITE);
+    #endif  
 }
+
 
 void UnloadPlayer(void) {
 
