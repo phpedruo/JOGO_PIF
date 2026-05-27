@@ -1,6 +1,6 @@
 CC = gcc
 
-SRC = src/main.c src/road.c src/player.c src/camera.c src/sprite.c
+SRC = src/*.c
 
 OUT = game
 
