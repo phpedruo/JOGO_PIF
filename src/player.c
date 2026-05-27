@@ -1,7 +1,10 @@
 #include "player.h"
 #include "road.h"
 #include <math.h>
+
 extern float turnValue;
+
+
 
 Player player;
 float playerX = 0;
@@ -15,9 +18,12 @@ void InitPlayer(void) {
     player.hitboxHeight = 1.5f;
     player.onGrass = false;
     player.hitTimer = 0.0f;
+    player.currentSprite = CAR_STRAIGT;
 
-    player.texture =
-        LoadTexture("assets/sprites/player.png");
+    player.sprites[CAR_STRAIGT] = LoadTexture("assets/sprites/player.png");
+    player.sprites[CAR_LEFT]    = LoadTexture("assets/sprites/player_left.png");
+    player.sprites[CAR_RIGHT] = LoadTexture("assets/sprites/player_right.png");
+
 }
 
 Rectangle GetPlayerHitbox(){
@@ -87,12 +93,21 @@ void UpdatePlayer(void) {
     float steerStrength =
         3.5f + player.speed ;
 
-    if (IsKeyDown(KEY_LEFT))
+    bool pressingLeft  = IsKeyDown(KEY_LEFT);
+    bool pressingRight = IsKeyDown(KEY_RIGHT);
+
+    if (pressingLeft)
         playerX -= steerStrength;
 
-    if (IsKeyDown(KEY_RIGHT))
+    if (pressingRight)
         playerX += steerStrength;
-    
+
+    if(pressingRight)
+        player.currentSprite = CAR_RIGHT;
+    else if(pressingLeft)
+        player.currentSprite = CAR_LEFT;
+    else 
+        player.currentSprite = CAR_STRAIGT;
     // =========================
     // MOVIMENTO DA PISTA
     // =========================
@@ -134,27 +149,24 @@ void UpdatePlayer(void) {
 
 void DrawPlayer(void) {
 
+    Texture2D tex = player.sprites[player.currentSprite];
+
     float scale = 2.0f;
-
-    float width =
-        player.texture.width * scale;
-
-    float height =
-        player.texture.height * scale;
-
+    float width = tex.width * scale;
+    float height = tex.height * scale;
+   
     float screenX = SCREEN_WIDTH /2 + playerX * 0.5f;
-
     float screenY = SCREEN_HEIGHT - height / 2 + 20;
-
+    float rotation = (player.currentSprite == CAR_STRAIGT) ? turnValue * 0.005f : 0.0f;
     DrawTexturePro(
-        
-        player.texture,
+
+        tex,
 
         (Rectangle){
             0,
             0,
-            player.texture.width,
-            player.texture.height
+            tex.width,
+            tex.height
         },
 
         (Rectangle){
@@ -169,7 +181,7 @@ void DrawPlayer(void) {
             height
         },
 
-        turnValue * 0.01f,
+        rotation,
         WHITE
   
     );
@@ -184,14 +196,16 @@ void DrawPlayer(void) {
             2,
             RED
         );
-        
+
+        DrawText(TextFormat("sprite: %d", player.currentSprite), 10, 145, 20, YELLOW);
         DrawText(TextFormat("playerX: %.1f", playerX), 10, 65, 20, WHITE);
         DrawText(TextFormat("speed:   %.2f", player.speed), 10, 90, 20, WHITE);
+        DrawText(TextFormat("curve: %.3f", readTrack(roadPosition)), 10, 115, 20, YELLOW);
     #endif  
 }
 
 
 void UnloadPlayer(void) {
-
-    UnloadTexture(player.texture);
+    for (int i = 0; i < CAR_SPRITE_COUNT; i++)
+        UnloadTexture(player.sprites[i]);
 }
