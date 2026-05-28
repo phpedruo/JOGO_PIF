@@ -23,7 +23,7 @@ void InitNPCs(float playerRoadPos) {
         /* espaça os NPCs à frente do jogador */
         npcs[i].roadPos   = playerRoadPos + 0.5f + (float)i * 0.4f;
         npcs[i].laneX     = startX[i];
-        npcs[i].speed     = 30.0f + (float)(i * 5);
+        npcs[i].speed     = 25.0f + (float)(i * 5);
         npcs[i].spriteIdx = i % NPC_SPRITE_COUNT;
     }
 }

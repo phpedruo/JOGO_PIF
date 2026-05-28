@@ -7,6 +7,7 @@
 #include "game.h"
 #include "collision.h"
 #include "cloud.h"
+#include "audio.h"
 
 #define SCREEN_WIDTH  1280
 #define SCREEN_HEIGHT 720
@@ -21,6 +22,7 @@ int main() {
     InitClouds();
     InitGame();
     InitNPCs(roadPosition);
+    InitAudio_Game();
 
     while (!WindowShouldClose()) {
         // Update
@@ -28,6 +30,7 @@ int main() {
         UpdateGameCamera();
         UpdateGame(player.speed);
         UpdateNPCs(roadPosition, player.speed);
+        UpdateAudio();
         
         // Draw
         BeginDrawing();
@@ -56,6 +59,8 @@ int main() {
     UnloadClouds();
     UnloadPlayer();
     UnloadNPCs();
+    UnloadAudio_Game();
     CloseWindow();
+
     return 0;
 }
