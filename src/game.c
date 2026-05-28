@@ -1,20 +1,127 @@
 #include "game.h"
 #include "raylib.h"
+#include <string.h>
+#include <stdio.h>
 
 #define SCREEN_WIDTH  1280
 #define SCREEN_HEIGHT 720
 
 GameState gameState;
 
+static void LoadHighscores() {
+    gameState.scoreCount = 0;
+    FILE* f = fopen(SCORE_FILE, "r");
+    if (!f) return;
+
+    while (gameState.scoreCount < MAX_SCORES) {
+        ScoreEntry* e = &gameState.highscores[gameState.scoreCount];
+        if (fscanf(f, "%31s %d", e->name, &e->score) != 2) break;
+        gameState.scoreCount++;
+    }
+    fclose(f);
+}
+
+static void SaveHighscores(){
+    FILE* f = fopen(SCORE_FILE, "w");
+    if(!f) return;
+    for(int i =0; i < gameState.scoreCount; i++)
+        fprintf(f, "%s %d\n",
+                gameState.highscores[i].name,
+                gameState.highscores[i].score);
+    fclose(f);
+}
+
+static void TryInsertScore(const char* name, int score){
+    int count = gameState.scoreCount;
+
+    if (count >= MAX_SCORES && score <= gameState.highscores[MAX_SCORES-1].score)
+        return;
+
+    int pos = (count < MAX_SCORES) ? count : MAX_SCORES - 1;
+    for (int i = 0; i < count && i < MAX_SCORES; i++) {
+        if (score > gameState.highscores[i].score) { pos = i; break; }
+    }
+
+    int limit = (count < MAX_SCORES) ? count : MAX_SCORES - 1;
+    for (int i = limit; i > pos; i--)
+        gameState.highscores[i] = gameState.highscores[i-1];
+
+    strncpy(gameState.highscores[pos].name, name, 31);
+    gameState.highscores[pos].name[31] = '\0';
+    gameState.highscores[pos].score    = score;
+
+    if (gameState.scoreCount < MAX_SCORES) gameState.scoreCount++;
+
+    SaveHighscores();
+}
+
+static void DrawHighscores(void) {
+    DrawRectangle(SCREEN_WIDTH/2 - 220, SCREEN_HEIGHT/2 - 260, 440, 520,
+                  Fade(BLACK, 0.88f));
+    DrawText("TOP 10", SCREEN_WIDTH/2 - 55, SCREEN_HEIGHT/2 - 240, 32, YELLOW);
+
+    if (gameState.scoreCount == 0) {
+        DrawText("Nenhuma pontuacao ainda",
+                 SCREEN_WIDTH/2 - 140, SCREEN_HEIGHT/2 - 190, 20, GRAY);
+        return;
+    }
+
+    for (int i = 0; i < gameState.scoreCount; i++) {
+        Color c = (i == 0) ? GOLD :
+                  (i == 1) ? LIGHTGRAY :
+                  (i == 2) ? ORANGE : WHITE;
+        DrawText(TextFormat("%2d. %-14s %d",
+                            i+1,
+                            gameState.highscores[i].name,
+                            gameState.highscores[i].score),
+                 SCREEN_WIDTH/2 - 190,
+                 SCREEN_HEIGHT/2 - 190 + i * 40,
+                 22, c);
+    }
+
+    DrawText("ENTER para reiniciar  ESC para sair",
+             SCREEN_WIDTH/2 - 190, SCREEN_HEIGHT/2 + 230, 18, GRAY);
+}
+
+
 void InitGame(void) {
-    gameState.lives      = 3;
-    gameState.score      = 0;
-    gameState.scoreTimer = 0.0f;
-    gameState.gameOver   = false;
+    gameState.lives         = 3;
+    gameState.score         = 0;
+    gameState.scoreTimer    = 0.0f;
+    gameState.gameOver      = false;
+    gameState.enteringName  = false;
+    gameState.scoreSaved    = false;
+    gameState.nameLen       = 0;
+    gameState.playerName[0] = '\0';
+
+    LoadHighscores();
 }
 
 void UpdateGame(float playerSpeed) {
-    if (gameState.gameOver) return;
+    if (gameState.gameOver) {
+        if (!gameState.scoreSaved && !gameState.enteringName)
+            gameState.enteringName = true;
+
+        if (gameState.enteringName) {
+            int key = GetCharPressed();
+            while (key > 0) {
+                if (key >= 32 && key <= 125 && gameState.nameLen < 31) {
+                    gameState.playerName[gameState.nameLen++] = (char)key;
+                    gameState.playerName[gameState.nameLen]   = '\0';
+                }
+                key = GetCharPressed();
+            }
+            if (IsKeyPressed(KEY_BACKSPACE) && gameState.nameLen > 0)
+                gameState.playerName[--gameState.nameLen] = '\0';
+
+            if (IsKeyPressed(KEY_ENTER) && gameState.nameLen > 0) {
+                TryInsertScore(gameState.playerName, gameState.score);
+                gameState.scoreSaved   = true;
+                gameState.enteringName = false;
+            }
+        }
+        return;  // mantém o return — reinício é tratado no main.c
+    }
 
     gameState.scoreTimer += GetFrameTime();
     if (gameState.scoreTimer >= 1.0f) {
@@ -24,13 +131,26 @@ void UpdateGame(float playerSpeed) {
 }
 
 void DrawHUD(void) {
-    DrawText(TextFormat("SCORE: %d", gameState.score), 10, 10, 24, WHITE);
+    DrawText(TextFormat("SCORE: %d", gameState.score), 20, 10, 24, WHITE);
 
-    // Vidas como [v] já que fonte padrão não suporta ♥
-    for (int i = 0; i <= gameState.lives; i++)
+    for (int i = 0; i < gameState.lives; i++)
         DrawText("[v]", 20 + i * 50, 40, 24, RED);
 
-    if (gameState.gameOver)
-        DrawText("GAME OVER", SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT / 2, 48, RED);
-        
+    if (!gameState.gameOver) return;
+
+    if (gameState.enteringName) {
+        // Tela de entrada de nome
+        DrawRectangle(SCREEN_WIDTH/2 - 240, SCREEN_HEIGHT/2 - 100,
+                      480, 200, Fade(BLACK, 0.90f));
+        DrawText("GAME OVER",
+                 SCREEN_WIDTH/2 - 110, SCREEN_HEIGHT/2 - 85, 36, RED);
+        DrawText("Digite seu nome:",
+                 SCREEN_WIDTH/2 - 200, SCREEN_HEIGHT/2 - 30, 22, WHITE);
+        DrawText(TextFormat("%s_", gameState.playerName),
+                 SCREEN_WIDTH/2 - 200, SCREEN_HEIGHT/2 + 10, 28, YELLOW);
+        DrawText("ENTER para confirmar",
+                 SCREEN_WIDTH/2 - 200, SCREEN_HEIGHT/2 + 60, 18, GRAY);
+    } else if (gameState.scoreSaved) {
+        DrawHighscores();
+    }
 }

@@ -29,7 +29,7 @@ void CheckCollisions(float playerRoadPos) {
             gameState.lives--;
             player.hitTimer  = 2.0f;
             player.speed    *= 0.3f;
-            if (gameState.lives < 0)
+            if (gameState.lives <= 0)
                 gameState.gameOver = true;
             break;
         }

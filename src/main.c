@@ -39,8 +39,17 @@ int main() {
         DrawPlayer();                      // player por cima
         DrawHUD();
         EndDrawing();
-        
+
         CheckCollisions(roadPosition);
+
+        // Reinicia o jogo após ver o placar
+        if (gameState.scoreSaved && IsKeyPressed(KEY_ENTER)) {
+            // Reseta tudo
+            roadPosition = 0;
+            InitGame();
+            InitPlayer();
+            InitNPCs(roadPosition);
+        }
     }
 
     UnloadSprites();
