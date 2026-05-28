@@ -6,6 +6,7 @@
 #include "npc.h"
 #include "game.h"
 #include "collision.h"
+#include "cloud.h"
 
 #define SCREEN_WIDTH  1280
 #define SCREEN_HEIGHT 720
@@ -17,6 +18,7 @@ int main() {
     InitRoad();
     InitPlayer();
     InitSprites();
+    InitClouds();
     InitGame();
     InitNPCs(roadPosition);
 
@@ -30,7 +32,8 @@ int main() {
 
         // Draw
         BeginDrawing();
-            ClearBackground(SKYBLUE);
+            ClearBackground(BLACK);
+            DrawClouds();
             DrawRoad();
             DrawSprites();
             DrawNPCs(roadPosition, playerX);  // NPCs ANTES do player
@@ -40,6 +43,7 @@ int main() {
     }
 
     UnloadSprites();
+    UnloadClouds();
     UnloadPlayer();
     UnloadNPCs();
     CloseWindow();

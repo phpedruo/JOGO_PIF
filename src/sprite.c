@@ -49,22 +49,37 @@ void InitSprites(void) {
     /* registra os tipos disponíveis */
     int idxTree = AddSpriteType("assets/sprites/tree.png", 2.0f, 0.3f);
     /* quando tiver mais sprites, adicione aqui:
-       int idxBush  = AddSpriteType("assets/sprites/bush.png",  0.8f, 0.1f);
-       int idxPalm  = AddSpriteType("assets/sprites/palm_tree.png", 1.8f, 0.4f);
-       int idxRock  = AddSpriteType("assets/sprites/rock_sml.png",  0.6f, 0.0f); */
+    int idxPalm  = AddSpriteType("assets/sprites/palm_tree.png", 1.8f, 0.4f); */
 
+    int idxBush  = AddSpriteType("assets/sprites/bush.png",  0.8f, 0.1f);
+    int idxRock  = AddSpriteType("assets/sprites/rock_sml.png",  0.6f, 0.0f); 
+       
     /* inicializa tudo vazio */
     for (int i = 0; i < OBJECTS_PER_SIDE; i++) {
         leftObjects[i].typeIdx  = -1;
         rightObjects[i].typeIdx = -1;
     }
 
-    /* distribui aleatoriamente — ~30% de chance em cada slot */
+    /* distribui aleatoriamente — ~10% de chance em cada slot */
     for (int i = 0; i < OBJECTS_PER_SIDE; i++) {
         if (GetRandomValue(0, 99) < 12)
             leftObjects[i].typeIdx  = idxTree;
         if (GetRandomValue(0, 99) < 12)
             rightObjects[i].typeIdx = idxTree;
+    }
+
+    for(int i =0; i<OBJECTS_PER_SIDE;i++){
+        if(GetRandomValue(0,99) < 2)
+            leftObjects[i].typeIdx=idxRock;
+        if(GetRandomValue(0,99) < 2)
+            rightObjects[i].typeIdx=idxRock;
+    }
+
+    for(int i=0; i<OBJECTS_PER_SIDE;i++){
+        if(GetRandomValue(0,99) < 10)
+            leftObjects[i].typeIdx=idxBush;
+        if(GetRandomValue(0,99) < 10)
+            rightObjects[i].typeIdx=idxBush;
     }
 }
 
