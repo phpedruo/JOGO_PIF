@@ -7,13 +7,6 @@
 NPC       npcs[MAX_NPCS];
 Texture2D npcSprites[NPC_SPRITE_COUNT];
 
-/* -----------------------------------------------------------------
-   IMPORTANTE: track[] no seu road.c já armazena screenX em pixels
-   Raylib (0..1280), NÃO em espaço microStudio.
-
-   Por isso DrawNPCs NÃO faz conversão de espaço — usa track[]
-   diretamente como X base e calcula Y via a mesma fórmula do DrawRoad.
------------------------------------------------------------------ */
 
 void InitNPCs(float playerRoadPos) {
     npcSprites[0] = LoadTexture("assets/sprites/npc_green.png");
@@ -27,7 +20,7 @@ void InitNPCs(float playerRoadPos) {
     for (int i = 0; i < MAX_NPCS; i++) {
         npcs[i].active    = true;
         npcs[i].finished  = false;
-        /* espaça os NPCs à frente do jogador (igual ao exemplo: i * 0.1) */
+        /* espaça os NPCs à frente do jogador */
         npcs[i].roadPos   = playerRoadPos + 0.5f + (float)i * 0.4f;
         npcs[i].laneX     = startX[i];
         npcs[i].speed     = 30.0f + (float)(i * 5);
