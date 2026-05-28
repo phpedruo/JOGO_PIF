@@ -19,7 +19,7 @@ void InitNPCs(float playerRoadPos) {
 
     for (int i = 0; i < MAX_NPCS; i++) {
         npcs[i].active    = true;
-        npcs[i].finished  = false;
+       // npcs[i].finished  = false;
         /* espaça os NPCs à frente do jogador */
         npcs[i].roadPos   = playerRoadPos + 0.5f + (float)i * 0.4f;
         npcs[i].laneX     = startX[i];
@@ -29,17 +29,37 @@ void InitNPCs(float playerRoadPos) {
 }
 
 void UpdateNPCs(float playerRoadPos, float playerSpeed) {
-    (void)playerRoadPos;
     (void)playerSpeed;
     float dt = GetFrameTime();
-    for (int i = 0; i < MAX_NPCS; i++) {
-        npcs[i].screenBox = (Rectangle){ 0, 0, 0, 0 };
+    float startX[] = { -120.0f, 120.0f, -60.0f, 60.0f, 0.0f };
 
-        if (!npcs[i].active || npcs[i].finished) continue;
-        /* idêntico ao exemplo: c.position += c.speed * dt / 50 */
+    for (int i = 0; i < MAX_NPCS; i++) {
+        npcs[i].screenBox = (Rectangle){ 0, 0, 0, 0 };  
+      
+    }
+
+    #define LANE_COUNT 5
+
+    for (int i = 0; i < MAX_NPCS; i++) {
+        if (!npcs[i].active) continue;
+
         npcs[i].roadPos += npcs[i].speed * dt / 50.0f;
+
+        // Wrap na pista
         if (npcs[i].roadPos >= (float)trackDataLen)
             npcs[i].roadPos -= (float)trackDataLen;
+
+        float d = npcs[i].roadPos - playerRoadPos;
+        if (d < -((float)trackDataLen / 2.0f)) d += (float)trackDataLen;
+
+        // Se ficou para trás do player, reposiciona à frente
+        if (d < -1.0f) {
+            npcs[i].roadPos   = playerRoadPos + 1.0f + (float)(rand() % 8);
+            npcs[i].laneX     = startX[rand() % LANE_COUNT];
+            npcs[i].spriteIdx = rand() % NPC_SPRITE_COUNT;
+            npcs[i].speed     = 30.0f + (float)(rand() % 30);
+                npcs[i].screenBox = (Rectangle){ 0, 0, 0, 0 };
+        }
     }
 }
 

@@ -4,7 +4,7 @@
 #include "raylib.h"
 #include <stdbool.h>
 
-#define MAX_NPCS 20
+#define MAX_NPCS 10
 #define NPC_SPRITE_COUNT 2
 
 typedef struct {
@@ -13,7 +13,7 @@ typedef struct {
     float speed;
     int   spriteIdx; // 0 = verde, 1 = preto
     bool  active;
-    bool finished;
+  //  bool finished;
     Rectangle screenBox;
 } NPC;
 
