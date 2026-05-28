@@ -32,12 +32,12 @@ Rectangle GetPlayerScreenBox(void) {
     float height = player.sprites[CAR_STRAIGT].height * scale;
     float screenX = SCREEN_WIDTH  / 2 + playerX * 0.5f;
     float screenY = SCREEN_HEIGHT - height / 2 + 20;
-    return (Rectangle){
-        screenX - width  / 2,
-        screenY - height,
-        width,
-        height
-    };
+      return (Rectangle){
+                screenX - width / 2 +20,
+                screenY - height +20,
+                width - 40,
+                height -40
+     };
 }
 /*
 Rectangle GetPlayerHitbox(){
@@ -75,7 +75,7 @@ void UpdatePlayer(void) {
 
     if (IsKeyDown(KEY_DOWN)) {
 
-        player.speed -= 0.05f;
+        player.speed -= 0.015f;
     }
     
     // =========================
@@ -97,8 +97,8 @@ void UpdatePlayer(void) {
     if (player.speed < 0)
         player.speed = 0;
 
-    if (player.speed > 2.5f)
-        player.speed = 2.5f;
+    if (player.speed > 2.7f)
+        player.speed = 2.7f;
 
     // =========================
     // DIREÇÃO
@@ -130,9 +130,10 @@ void UpdatePlayer(void) {
     roadPosition += player.speed * 0.01f;
     roadPosition  = fmod(roadPosition, trackDataLen);
 
-    float curve = readTrack(roadPosition);
 
-    playerX -= curve * player.speed * 0.015f;
+    // mecanica do contraesterço nas curvas
+    float curve = readTrack(roadPosition);
+    playerX -= curve * player.speed * 0.01f;
 
     // GRAMA
     player.onGrass = CheckPlayerOnGrass();
@@ -202,10 +203,10 @@ void DrawPlayer(void) {
     #ifdef DEBUG_HITBOX
         DrawRectangleLinesEx(
             (Rectangle){
-                screenX - width / 2,
-                screenY - height,
-                width,
-                height
+                screenX - width / 2 +20,
+                screenY - height +20,
+                width - 40,
+                height -40
             },
             2,
             RED

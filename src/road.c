@@ -9,7 +9,28 @@ float track[100];
 float turnValue = 0;
 
 
-static const char* trackData = "===l===r===LR===RR==R=L=L=L======RR=RLR===";
+static const char* trackData = 
+    // 1. Decolagem e Aquecimento (Reta longa para pegar velocidade e curvas suaves)
+    "=============lll===rrr==="
+    
+    // 2. O Grande Canyon (Curva longa e fechada para a direita, exigindo foco)
+    "rrRRRRRrr=========="
+    
+    // 3. Zona de Desvio (Uma "Chicane" ou S rápido para testar os reflexos)
+    "llLLll===rrRRrr====="
+    
+    // 4. O Vale Aberto (Uma curva gigante e constante para a esquerda)
+    "lllllLLLLLLLlllll=========="
+    
+    // 5. Corredor de Combate (Seção sinuosa rápida, ideal para desviar de mísseis/obstáculos)
+    "ll==rr==ll==rr==LL==RR==LL==RR====="
+    
+    // 6. O Grampo Duplo (O desafio final: curva fechada para a direita seguida de uma para a esquerda)
+    "rrRRRRRRRrr===llLLLLLLLLLll==="
+    
+    // 7. Reta de Chegada / Zona de Pouso
+    "=========================";
+
 int trackDataLen = 0;
 
 float lineToDistance(float line) {

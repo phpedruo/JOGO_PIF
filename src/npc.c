@@ -6,7 +6,7 @@
 
 #define SCREEN_WIDTH  1280
 #define SCREEN_HEIGHT 720
-#define MAX_NPCS_ALIVE 10
+#define MAX_NPCS_ALIVE 4
 
 Texture2D npcSprites[NPC_SPRITE_COUNT];
 NPCNode*  npcList = NULL;
