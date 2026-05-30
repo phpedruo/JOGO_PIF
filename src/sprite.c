@@ -23,7 +23,8 @@ typedef struct {
 static SpriteType spriteTypes[MAX_SPRITE_TYPES];
 static int spriteTypeCount = 0;
 static int idxTunnelWall = -1;        
-static int idxTunnelLamp = -1;  
+static int idxTunnelLamp = -1;
+static int idxTunnelEntrance = -1;  
 
 /* --- objetos fixos em cada lado da pista ----------------------- */
 typedef struct {
@@ -57,6 +58,7 @@ void InitSprites(void) {
     int idxRock  = AddSpriteType("assets/sprites/rock_sml.png",  0.6f, 0.0f);
     idxTunnelWall = AddSpriteType("assets/sprites/tunnel_wall.png", 0.8f, 0.0f);
     idxTunnelLamp = AddSpriteType("assets/sprites/tunnel_lamp.png", 0.5f, 0.0f);
+    idxTunnelEntrance = AddSpriteType("assets/sprites/tunnel_entrance.png", 3.0f, 0.0f);
     printf("idxTunnelWall: %d w:%d h:%d\n", 
        idxTunnelWall, 
        spriteTypes[idxTunnelWall].tex.width,
@@ -192,7 +194,38 @@ void DrawSprites(void) {
         }
     }
     printf("istunel: %d currentbiome: %d\n", isTunnel, currentBiome);
-}
+    if (isTunnel && idxTunnelEntrance >= 0) {
+        float tunnelStart = 60.0f;
+        float d = tunnelStart - roadPosition;  /* distância até a entrada */
+
+        /* só desenha se a entrada ainda estiver à frente do player */
+        if (d > 0.0f && d < 10.0f) {
+            float line = distanceToLine(d);
+            if (line >= 5.0f && line <= 99.0f) {
+                int h = (int)line;
+                if (h < 5) h = 5;
+                if (h > 98) h = 98;
+                float px      = track[h];
+                float scale_ms = 1000.0f / (d * 120.0f);
+                float scalePx  = scale_ms * ((float)sh / 200.0f);
+                SpriteType *sp = &spriteTypes[idxTunnelEntrance];
+                float w  = (float)sp->tex.width  * (scalePx / 80.0f) * sp->sizeScale;
+                float h2 = (float)sp->tex.height * (scalePx / 80.0f) * sp->sizeScale;
+                float screenY = (float)sh - line * (float)(sh - horizon) / 100.0f;
+                if (w >= 4.0f) {
+                    DrawTexturePro(
+                        sp->tex,
+                        (Rectangle){ 0, 0, (float)sp->tex.width, (float)sp->tex.height },
+                        (Rectangle){ px - w / 2.0f, screenY - h2, w, h2 },
+                        (Vector2){ 0, 0 },
+                        0.0f, WHITE
+                    );
+                }
+            }
+        }
+    }
+} 
+
 
 /* -----------------------------------------------------------------
    UnloadSprites
