@@ -56,7 +56,7 @@ void InitSprites(void) {
     int idxBush  = AddSpriteType("assets/sprites/bush.png",  0.8f, 0.1f);
     int idxRock  = AddSpriteType("assets/sprites/rock_sml.png",  0.6f, 0.0f);
     idxTunnelWall = AddSpriteType("assets/sprites/tunnel_wall.png", 0.8f, 0.0f);
-    idxTunnelLamp = AddSpriteType("assets/sprites/tunnel_lamp.png", 1.2f, 0.0f);
+    idxTunnelLamp = AddSpriteType("assets/sprites/tunnel_lamp.png", 0.5f, 0.0f);
     printf("idxTunnelWall: %d w:%d h:%d\n", 
        idxTunnelWall, 
        spriteTypes[idxTunnelWall].tex.width,
@@ -147,7 +147,7 @@ void DrawSprites(void) {
                 DrawTexturePro(
                     lamp->tex,
                     (Rectangle){ 0, 0, (float)lamp->tex.width, (float)lamp->tex.height },
-                    (Rectangle){ px - w / 2.0f, screenY - h2 * 2.5f, w, h2 },
+                    (Rectangle){ px - w / 2.0f, screenY - h2 * 7.0f, w, h2 },
                     (Vector2){ 0, 0 },
                     0.0f, WHITE
                 );

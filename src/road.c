@@ -110,7 +110,7 @@ void DrawRoad(void) {
 
         int horizon = SCREEN_HEIGHT / 2+35;  // linha do horizonte
         DrawRectangle(0, horizon, SCREEN_WIDTH, SCREEN_HEIGHT - horizon,
-         currentBiome == BIOME_TUNNEL ? (Color){30,30,35,255} : DARKGREEN);
+         currentBiome == BIOME_TUNEL ? (Color){30,30,35,255} : DARKGREEN);
 
         for (int i = 5; i < 100; i++) {
             
@@ -161,7 +161,7 @@ void DrawRoad(void) {
             if (i == 0) turnValue = t;
         }
                 // teto do túnel
-        if (currentBiome == BIOME_TUNNEL) {
+        if (currentBiome == BIOME_TUNEL) {
             DrawRectangle(0, 0, SCREEN_WIDTH, horizon, (Color){30, 30, 35, 255});
         
             for (int i = 5; i < 100; i += 8) {
@@ -176,5 +176,5 @@ void DrawRoad(void) {
             }   
         }
         DrawRectangle(0, horizon, SCREEN_WIDTH, 3,
-        currentBiome == BIOME_TUNNEL ? (Color){50,50,55,255} : GREEN);
+        currentBiome == BIOME_TUNEL ? (Color){50,50,55,255} : GREEN);
     }   
