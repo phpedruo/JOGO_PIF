@@ -10,7 +10,7 @@
    road.c (track[] já em pixels, screenY pela fórmula do DrawRoad).
 ----------------------------------------------------------------- */
 
-#define MAX_SPRITE_TYPES  8
+#define MAX_SPRITE_TYPES  12
 #define OBJECTS_PER_SIDE  (TRACK_LENGTH * 10)  /* densidade ao longo da pista */
 
 /* --- tipos de sprite disponíveis -------------------------------- */
