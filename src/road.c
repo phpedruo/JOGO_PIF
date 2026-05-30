@@ -160,6 +160,21 @@ void DrawRoad(void) {
             track[i] = screenX;
             if (i == 0) turnValue = t;
         }
+                // teto do túnel
+        if (currentBiome == BIOME_TUNNEL) {
+            DrawRectangle(0, 0, SCREEN_WIDTH, horizon, (Color){30, 30, 35, 255});
+        
+            for (int i = 5; i < 100; i += 8) {
+                float line  = (float)i;
+                float vigaH = 4.0f + (float)i * 0.3f;
+                float width = (SCREEN_WIDTH * 0.06f) / lineToDistance(line);
+                float px    = track[i];
+                float vigaW = width * 2.5f;
+                DrawRectangle(px - vigaW / 2, horizon - (int)vigaH,
+                            vigaW, vigaH,
+                            (Color){ 70, 70, 80, 255 });
+            }   
+        }
         DrawRectangle(0, horizon, SCREEN_WIDTH, 3,
         currentBiome == BIOME_TUNNEL ? (Color){50,50,55,255} : GREEN);
     }   

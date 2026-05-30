@@ -23,6 +23,7 @@ typedef struct {
 static SpriteType spriteTypes[MAX_SPRITE_TYPES];
 static int spriteTypeCount = 0;
 static int idxTunnelWall = -1;        
+static int idxTunnelLamp = -1;  
 
 /* --- objetos fixos em cada lado da pista ----------------------- */
 typedef struct {
@@ -50,12 +51,12 @@ static int AddSpriteType(const char *path, float sizeScale, float offset) {
 void InitSprites(void) {
     /* registra os tipos disponíveis */
     int idxTree = AddSpriteType("assets/sprites/tree.png", 2.0f, 0.3f);
-    /* quando tiver mais sprites, adicione aqui:
-    int idxPalm  = AddSpriteType("assets/sprites/palm_tree.png", 1.8f, 0.4f); */
-
+    
+    //int idxPalm  = AddSpriteType("assets/sprites/palm_tree.png", 1.8f, 0.4f); 
     int idxBush  = AddSpriteType("assets/sprites/bush.png",  0.8f, 0.1f);
     int idxRock  = AddSpriteType("assets/sprites/rock_sml.png",  0.6f, 0.0f);
     idxTunnelWall = AddSpriteType("assets/sprites/tunnel_wall.png", 0.8f, 0.0f);
+    idxTunnelLamp = AddSpriteType("assets/sprites/tunnel_lamp.png", 1.2f, 0.0f);
     printf("idxTunnelWall: %d w:%d h:%d\n", 
        idxTunnelWall, 
        spriteTypes[idxTunnelWall].tex.width,
@@ -136,6 +137,22 @@ void DrawSprites(void) {
 
         /* fator de conversão microStudio → Raylib */
         float scalePx = scale_ms * ((float)sh / 200.0f);
+        // lâmpadas no teto do túnel
+        if (isTunnel && idxTunnelLamp >= 0 && i % 15 == 0) {
+            SpriteType *lamp = &spriteTypes[idxTunnelLamp];
+            float w  = (float)lamp->tex.width  * (scalePx / 80.0f) * lamp->sizeScale;
+            float h2 = (float)lamp->tex.height * (scalePx / 80.0f) * lamp->sizeScale;
+            if (w >= 4.0f) {
+            // ancora no teto — sprite fica acima do horizonte
+                DrawTexturePro(
+                    lamp->tex,
+                    (Rectangle){ 0, 0, (float)lamp->tex.width, (float)lamp->tex.height },
+                    (Rectangle){ px - w / 2.0f, screenY - h2 * 2.5f, w, h2 },
+                    (Vector2){ 0, 0 },
+                    0.0f, WHITE
+                );
+            }
+        }
 
         /* --- lado esquerdo --- */
         int leftIdx = isTunnel ? idxTunnelWall:leftObjects[objIdx].typeIdx;
