@@ -37,8 +37,8 @@ void InitClouds(void) {
     int sml = AddCloudTex("assets/sprites/cloud_sml.png");
 
     bgTexture = LoadTexture("assets/sprites/background.png");
-    bgTunnel  = LoadTexture("assets/sprites/mountain_bg.png");
-    bgCity = LoadTexture("assets/sprites/citybg1.png");
+    bgTunnel  = LoadTexture("assets/sprites/mountainbg.png");
+    bgCity = LoadTexture("assets/sprites/citybg.png");
 
 
     int horizon = SCREEN_HEIGHT / 2 + 35;
