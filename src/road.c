@@ -136,10 +136,16 @@ void DrawRoad(void) {
                 //no tunel concreto mais escuro nas laterais e alfasto mais escuro     
                 grassColor = (Color){ 50, 50, 55, 255 };
                 roadColor  = (Color){ 40, 40, 45, 255 };
-            }else{
+            
+            }else if(currentBiome == BIOME_CITY){
+                grassColor = (Color){ 30, 30, 35, 255 };  // asfalto escuro
+                roadColor  = (seg % 10 < 5) ? DARKGRAY : GRAY;
+            }
+            else{
                 grassColor = (seg % 10 < 5) ? DARKGREEN : GREEN;
                 roadColor  = (seg % 10 < 5) ? DARKGRAY  : GRAY;
             }
+
 
             float lineH = (SCREEN_HEIGHT - horizon) / 100.0f;
 

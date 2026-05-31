@@ -171,7 +171,7 @@ void DrawClouds(void) {
             );
         }
         if (currentBiome == BIOME_CITY) {
-            int cityH = 250;
+            int cityH = 350;
             int cityY = horizon - cityH;
 
             DrawTexturePro(

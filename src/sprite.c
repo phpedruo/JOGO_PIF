@@ -57,11 +57,11 @@ void InitSprites(void) {
     idxTunnelEntrance = AddSpriteType("assets/sprites/tunnel_entrance_clean.png",3.0f, 0.0f);
 
     /* --- sprites da cidade --- */
-    idxCityLamp      = AddSpriteType("assets/sprites/poste.png",     1.5f, 0.2f);
-    idxCityBillboard = AddSpriteType("assets/sprites/billboard.png", 1.2f, 0.3f);
-    idxBuilding1     = AddSpriteType("assets/sprites/predio1.png",   2.0f, 0.5f);
-    idxBuilding2     = AddSpriteType("assets/sprites/predio2.png",   2.0f, 0.5f);
-    idxBuilding3     = AddSpriteType("assets/sprites/predio3.png",   2.0f, 0.5f);
+    idxCityLamp      = AddSpriteType("assets/sprites/poste.png",     0.8f, 0.2f);
+    // idxCityBillboard = AddSpriteType("assets/sprites/placa.png", 0.8f, 0.3f);
+    idxBuilding1     = AddSpriteType("assets/sprites/predio1.png",   1.2f, 0.5f);
+    idxBuilding2     = AddSpriteType("assets/sprites/predio2.png",   1.2f, 0.5f);
+    idxBuilding3     = AddSpriteType("assets/sprites/predio3.png",   1.2f, 0.5f);
     idxPlaca         = AddSpriteType("assets/sprites/placa.png",     0.8f, 0.1f);
 
     /* inicializa tudo vazio */
