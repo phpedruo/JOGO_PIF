@@ -22,6 +22,7 @@ static Cloud     clouds[MAX_CLOUDS];
 static int       cloudTexCount = 0;
 static Texture2D bgTexture;        /* background rural (tile 64x64) */
 static Texture2D bgTunnel;         /* montanha do túnel */
+static Texture2D bgCity;
 static float     bgOffset = 0.0f;
 
 static int AddCloudTex(const char *path) {
@@ -37,6 +38,8 @@ void InitClouds(void) {
 
     bgTexture = LoadTexture("assets/sprites/background.png");
     bgTunnel  = LoadTexture("assets/sprites/mountain_bg.png");
+    bgCity = LoadTexture("assets/sprites/citybg1.png");
+
 
     int horizon = SCREEN_HEIGHT / 2 + 35;
     int types[] = { big, med, sml, big, med, sml, big, med,
@@ -167,6 +170,21 @@ void DrawClouds(void) {
                 0.0f, tint
             );
         }
+        if (currentBiome == BIOME_CITY) {
+            int bgH = 250;
+            int bgY = horizon - bgH;
+
+            DrawTexturePro(
+                bgCity,
+                (Rectangle){ 0, 0, (float)bgCity.width, (float)bgCity.height },
+                (Rectangle){ 0, (float)bgY, (float)SCREEN_WIDTH, (float)bgH },
+                (Vector2){ 0, 0 },
+                0.0f, WHITE
+            );
+        }
+
+
+
     }
 }
 
@@ -175,4 +193,5 @@ void UnloadClouds(void) {
         UnloadTexture(cloudTextures[i].tex);
     UnloadTexture(bgTexture);
     UnloadTexture(bgTunnel);
+    UnloadTexture(bgCity);
 }
