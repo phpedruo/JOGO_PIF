@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 
 // Liste aqui todos os arquivos da sua playlist
 static const char* tracks[] = {
@@ -31,19 +32,23 @@ static const char* tracks[] = {
 static Music currentMusic;
 static int   currentTrack = -1;
 
+static Sound sndEngine;
+static Sound sndBrake;
+
 static void PlayRandomTrack(void) {
     // Para a música atual se estiver tocando
     if (currentTrack >= 0)
-        UnloadMusicStream(currentMusic);
-
+    UnloadMusicStream(currentMusic);
+    
     // Escolhe uma diferente da atual
     int next;
     do {
         next = rand() % TRACK_COUNT;
     } while (next == currentTrack && TRACK_COUNT > 1);
-
+    
     currentTrack  = next;
     currentMusic  = LoadMusicStream(tracks[currentTrack]);
+    SetMusicVolume(currentMusic, 0.1f);
     PlayMusicStream(currentMusic);
 }
 
@@ -51,6 +56,42 @@ void InitAudio_Game(void) {
     InitAudioDevice();
     srand((unsigned int)time(NULL));  // seed aleatória
     PlayRandomTrack();
+}
+
+void InitCarSounds(void) {
+    sndEngine = LoadSound("musicGame/engine.ogg");
+    sndBrake  = LoadSound("musicGame/tire.ogg");
+    SetSoundVolume(sndEngine, 1.5f);
+    SetSoundVolume(sndBrake,  0.9f);
+    PlaySound(sndEngine); // começa o loop do motor
+}
+
+void UpdateCarSounds(float speed, float maxSpeed, bool isBraking) {
+    float t      = speed / maxSpeed;           // 0.0 → 1.0
+    float pitch  = 0.5f + t * 1.5f;           // 0.5 (idle) → 2.0 (full)
+    float volume = 0.7f + t * 0.3f;
+
+    if (isBraking && speed > 0.3f) {
+        // motor fica grave ao frear
+        SetSoundPitch(sndEngine, 0.35f);
+        SetSoundVolume(sndEngine, 0.8f);
+
+        if (!IsSoundPlaying(sndBrake))
+            PlaySound(sndBrake);
+    } else {
+        StopSound(sndBrake);
+        SetSoundPitch(sndEngine, pitch);
+        SetSoundVolume(sndEngine, volume);
+    }
+
+    // mantém o loop do motor vivo
+    if (!IsSoundPlaying(sndEngine))
+        PlaySound(sndEngine);
+}
+
+void UnloadCarSounds(void) {
+    UnloadSound(sndEngine);
+    UnloadSound(sndBrake);
 }
 
 void UpdateAudio(void) {
@@ -63,6 +104,7 @@ void UpdateAudio(void) {
 }
 
 void UnloadAudio_Game(void) {
+    UnloadCarSounds();
     UnloadMusicStream(currentMusic);
     CloseAudioDevice();
 }
